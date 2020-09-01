@@ -1,0 +1,52 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="../jsbridge/jsbridge.js"></script>
+</head>
+<body>
+    <div id="app"> 
+        <p>{{ url }}</p>
+        <button v-on:click="foo">Show Alert</button>
+        <p>页面跳转</p>
+        <button v-on:click="navigate">跳转到prodict/index</button>
+        <p></p>
+        <button v-on:click="bar">网络请求</button>
+        <p>{{ response }}</p>
+    </div>
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                url: location,
+                response: "网络请求"
+            },
+            methods: {
+                foo: function() {
+                    brdigeSender.showMsg('123', (data) => {
+                        console.log(data);
+                        this.message = data.msg;
+                    });
+                },
+                bar: function() {
+                    let params = {
+                        "url": "https://www.baidu.com",
+                    };
+                    brdigeSender.request(params, (data) => {
+                        this.response = data;
+                    });
+                },
+                navigate: function() {
+                    brdigeSender.navigate({
+                        "url": "http://127.0.0.1:8080/pages/product/index.html"
+                    }, (data) => {
+
+                    });
+                }
+            }
+        })
+    </script>
+</body>
+</html>

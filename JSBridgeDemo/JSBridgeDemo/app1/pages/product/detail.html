@@ -1,0 +1,26 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="../../jsbridge/jsbridge.js"></script>
+</head>
+<body>
+    <div id="app"> 
+        <p>{{url}}</p>
+    </div>
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                url: location,
+            },
+            methods: {
+
+            }
+        })
+        bridgeMsgListener.h5Toast = app.onH5Toast;
+    </script>
+</body>
+</html>

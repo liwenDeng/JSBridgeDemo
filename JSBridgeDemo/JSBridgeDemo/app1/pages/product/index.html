@@ -1,0 +1,33 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="../../jsbridge/jsbridge.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    <div id="app"> 
+        <p>{{ url }}</p>
+        <p>跳转到product/detail</p>
+        <button v-on:click="navigate">页面跳转</button>
+    </div>
+    <script>
+        var app = new Vue({
+            el: "#app",
+            data: {
+                url: location,
+            },
+            methods: {
+                navigate: function() {
+                    brdigeSender.navigate({
+                        "url": "http://127.0.0.1:8080/pages/product/detail.html"
+                    }, (data) => {
+
+                    });
+                },
+            }
+        })
+    </script>
+</body>
+</html>
