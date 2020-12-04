@@ -4,7 +4,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Index</title>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="../jsbridge/jsbridge.js"></script>
+    <script type="module">
+        import bridgeMsgSender from '../jsbridge/bridgeMsgSender.js';
+    </script>
 </head>
 <body>
     <div id="app"> 
@@ -22,7 +24,7 @@
         </div>
         <textarea style="width: 100%; height: 200;">{{ logger }}</textarea>
     </div>
-    <script>
+    <script type="module">
         var app = new Vue({
             el: "#app",
             data: {
@@ -31,13 +33,15 @@
             },
             methods: {
                 showAlert: function() {
-                    brdigeSender.showMsg('123', (data) => {
+                    console.log(123);
+                    // console.log(bridgeMsgSender);
+                    bridgeMsgSender.showMsg('123', (data) => {
                         this.log(data);
                         this.message = data.msg;
                     });
                 },
                 navigate: function() {
-                    brdigeSender.navigate({
+                    bridgeMsgSender.navigate({
                         "url": "http://127.0.0.1:8080/pages/about.html?title=你好&arg1=a&arg2=b"
                     }, (data) => {
                         this.log(data);

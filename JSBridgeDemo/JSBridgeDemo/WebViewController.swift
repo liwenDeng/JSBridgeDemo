@@ -67,7 +67,7 @@ class WebViewController: UIViewController {
     }
     
     func loadRequest() {
-        if let request = H5URLRequest.requestFor(urlString, type: .bundle(inDir: "app1")) {
+        if let request = H5URLRequest.requestFor(urlString, type: .remote) {
             webView.load(request)
         }
     }
