@@ -43,6 +43,9 @@ class WebViewController: UIViewController {
         jsBridge.h5Toast()
     }
     
+    func registerLifeCircle() {
+    }
+    
     private func setupWebView() {
         let config = WKWebViewConfiguration()
         config.dataDetectorTypes = .all
@@ -53,9 +56,11 @@ class WebViewController: UIViewController {
         webView.scrollView.bounces = false
         webView.scrollView.isScrollEnabled = true
         webView.navigationDelegate = self
+        webView.uiDelegate = self
         webView.allowsLinkPreview = false
         
         jsBridge = JSBridge(webView: webView, delegate: self)
+        jsBridge.registerNativeApis()
         
         if #available(iOS 11.0, *) {
             webView.scrollView.contentInsetAdjustmentBehavior = .never
@@ -66,8 +71,18 @@ class WebViewController: UIViewController {
         loadRequest()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        jsBridge.onAppShow()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        jsBridge.onAppHide()
+    }
+    
     func loadRequest() {
-        if let request = H5URLRequest.requestFor(urlString, type: .remote) {
+        if let request = H5URLRequest.requestFor(urlString, type: .bundle(inDir: "dist")) {
             webView.load(request)
         }
     }
@@ -76,6 +91,16 @@ class WebViewController: UIViewController {
 extension WebViewController: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         
+    }
+}
+
+extension WebViewController: WKUIDelegate {
+    func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo, completionHandler: @escaping () -> Void) {
+        let alert = UIAlertController(title: "提示", message: message, preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "确定", style: .default, handler: nil)
+        alert.addAction(cancel)
+        present(alert, animated: true, completion: nil)
+        completionHandler()
     }
 }
 

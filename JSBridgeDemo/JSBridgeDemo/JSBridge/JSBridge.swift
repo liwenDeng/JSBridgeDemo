@@ -9,23 +9,35 @@
 import UIKit
 import WebKit
 
+typealias MessageData = Dictionary<String, Any>
+typealias MessageDataCallback = (_ data: MessageData?)->()
+typealias MessageDataHandler = (_ data: MessageData?, _ response: MessageDataCallback)->()
+
 class JSMessage: NSObject {
-    var action: String
-    var data: Dictionary<String, Any>?
-    var callbackId: String
+    enum MessageType: String {
+        case requestMessage = "RequestMessage"
+        case responseMessage = "ResponseMessage"
+    }
     
-    init(action: String, data: Dictionary<String, Any>?, callbackId: String) {
+    var action: String
+    var data: MessageData?
+    var messageId: String
+    var messageType: MessageType?
+    
+    init(action: String, data: MessageData?, messageId: String, messageType: String) {
         self.action = action
         self.data = data
-        self.callbackId = callbackId
+        self.messageId = messageId
+        self.messageType = MessageType(rawValue: messageType)
         super.init()
     }
     
-    convenience init?(_ dict: Dictionary<String, Any>) {
+    convenience init?(_ dict: MessageData) {
         if let action = dict["action"] as? String,
             let data = dict["data"] as? Dictionary<String, Any>,
-            let callbackId = dict["callbackId"] as? String {
-            self.init(action:action, data: data, callbackId: callbackId)
+            let messageId = dict["messageId"] as? String,
+            let messageType = dict["messageType"] as? String {
+            self.init(action:action, data: data, messageId: messageId, messageType: messageType)
         } else {
             return nil
         }
@@ -35,7 +47,8 @@ class JSMessage: NSObject {
         let msgDict: [String : Any] = [
             "action": action,
             "data": data ?? "",
-            "callbackId": callbackId
+            "messageId": messageId,
+            "messageType": messageType?.rawValue ?? "unknown",
         ]
         return msgDict.formatJSON() ?? ""
     }
@@ -44,13 +57,12 @@ class JSMessage: NSObject {
 class JSBridge: NSObject, WKScriptMessageHandler {
     
     private let messagehandlerName = "JSBridge"
-    private let handleNativeResponseAction = "handleNativeResponse"
-    private let handleNativeMsgFuncName = "handleNativeMsg"
+    private let handleNativeMsgFuncName = "_receiveMsg"
     private let jsBrdigeObject = "bridge"
-    
     private weak var webView: WKWebView?
     private weak var scriptDelegate: WKScriptMessageHandler?
-    private var callbackMaps = Dictionary<String, (_ data: Dictionary<String, Any>?)->()>()
+    private var callbackMaps = Dictionary<String, MessageDataCallback>()
+    private var registeredHandlerMap = Dictionary<String, MessageDataHandler>()
     
     var webVC: UIViewController? {
         if let vc = self.scriptDelegate as? UIViewController {
@@ -73,7 +85,7 @@ class JSBridge: NSObject, WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         scriptDelegate?.userContentController(userContentController, didReceive: message)
         print("收到JS消息: \(message.name), \(message.body)")
-        handleJSMsg(message)
+        receiveMsg(message)
     }
     
     func dispose() {
@@ -88,61 +100,64 @@ class JSBridge: NSObject, WKScriptMessageHandler {
     }
 }
 
-// MARK: SendMsg
+// MARK: Core
 extension JSBridge {
-    /// 调用h5的方法
-    func callH5Method(_ action: String, _ data: Dictionary<String, Any>? = nil, _ callback: ((Dictionary<String, Any>?)->())?) {
-        var callbackId: String?
+    /// 调用h5方法
+    func invoke(_ action: String, _ data: MessageData? = nil, _ callback: MessageDataCallback? = nil) {
+        var messageId = ""
         if let callback = callback {
-            callbackId = UUID().uuidString
-            callbackMaps[callbackId!] = callback
+            messageId = UUID().uuidString
+            callbackMaps[messageId] = callback
         }
-        let msg = JSMessage(action: action, data: data, callbackId: callbackId ?? "")
+        let msg = JSMessage(action: action, data: data, messageId: messageId, messageType: JSMessage.MessageType.requestMessage.rawValue)
         sendMsg(msg)
     }
     
-    /// 告诉h5处理响应数据
-    func h5HandleResponse(_ data: Dictionary<String, Any>, _ callbackId: String) {
-        let msg = JSMessage(action: handleNativeResponseAction, data: data, callbackId: callbackId)
-        sendMsg(msg)
+    /// 注册方法
+    func register(_ action: String, handler: @escaping MessageDataHandler) {
+        registeredHandlerMap[action] = handler
     }
     
     private func sendMsg(_ msg: JSMessage) {
-        // brdige.foo(args)
         let js = """
         \(jsBrdigeObject).\(handleNativeMsgFuncName)(\(msg.formatJSONString()))
         """
         evaluateJavaScript(js)
     }
-}
-
-// MARK: HandleJSMsg
-extension JSBridge {
+    
     /// 处理H5发送过来的消息
-    private func handleJSMsg(_ msg: WKScriptMessage) {
+    private func receiveMsg(_ msg: WKScriptMessage) {
         if !isSupportMsg(msg) { return }
         if let body = msg.body as? Dictionary<String, Any>,
-            let jsMsg = JSMessage(body) {
-            dispatchMsg(jsMsg)
-        }
-    }
-    
-    /// 消息分发
-    private func dispatchMsg(_ jsMsg: JSMessage) {
-        let selector = Selector("\(jsMsg.action):")
-        if self.responds(to: selector) {
-            DispatchQueue.main.async {
-               self.perform(selector, with: jsMsg)
+           let jsMsg = JSMessage(body) {
+            if jsMsg.messageType == .responseMessage {
+                handleResponseMsg(jsMsg)
+            } else if jsMsg.messageType == .requestMessage {
+                handleRequestMsg(jsMsg)
+            } else {
+                print("Error msssage")
             }
+        } else {
+            print("Error msssage")
         }
     }
     
-    /// native消息回调处理
-    private func handleH5Response(_ jsMsg: JSMessage) {
-        let callbackId = jsMsg.callbackId
-        if let callbackFunction = callbackMaps[callbackId] {
-            callbackFunction(jsMsg.data)
-            callbackMaps.removeValue(forKey: callbackId)
+    /// 响应类型消息处理
+    private func handleResponseMsg(_ msg: JSMessage) {
+        if let callback = callbackMaps[msg.messageId] {
+            callback(msg.data)
+        }
+    }
+    
+    /// 请求类型消息处理
+    private func handleRequestMsg(_ msg: JSMessage) {
+        if let handler = registeredHandlerMap[msg.action] {
+            //构造响应数据回调
+            let responseCallback: MessageDataCallback =  { [weak self] (responseData)  in
+                let responseMsg = JSMessage(action: msg.action, data: responseData, messageId: msg.messageId, messageType: JSMessage.MessageType.responseMessage.rawValue)
+                self?.sendMsg(responseMsg)
+            }
+            handler(msg.data, responseCallback)
         }
     }
     

@@ -42,6 +42,15 @@ class H5URLRequest {
         }
         print("Bundle中未找到: \(url.absoluteString) 对应的资源文件")
         return nil
+//        let relativePath = url.pathComponents.dropFirst().joined(separator: "/")
+//        if let filePath = Bundle.main.path(forResource: relativePath, ofType: nil, inDirectory: inDir) {
+//            var indexURL = URL(fileURLWithPath: filePath)
+//            indexURL = URL(string: "#/SelectEnterprise", relativeTo: indexURL)!
+//            let request = URLRequest(url: indexURL)
+//            return request
+//        }
+//        print("Bundle中未找到: \(url.absoluteString) 对应的资源文件")
+//        return nil
     }
     
     private static func mapToSandboxURL(_ url: URL, inDir: String) -> URLRequest? {

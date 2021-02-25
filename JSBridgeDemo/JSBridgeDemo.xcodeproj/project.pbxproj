@@ -15,9 +15,9 @@
 		BC29C71B24AECF840015A19B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BC29C71924AECF840015A19B /* LaunchScreen.storyboard */; };
 		BC29C72424AED0180015A19B /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC29C72324AED0180015A19B /* WebViewController.swift */; };
 		BC29C72624AED23E0015A19B /* JSBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC29C72524AED23E0015A19B /* JSBridge.swift */; };
-		BCE5A96824EE6AF50084AF42 /* app1 in Resources */ = {isa = PBXBuildFile; fileRef = BCE5A96724EE6AF50084AF42 /* app1 */; };
+		BC99C7C12580B12900FDD295 /* dist in Resources */ = {isa = PBXBuildFile; fileRef = BC99C7C02580B12900FDD295 /* dist */; };
 		BCE5A96B24EE710E0084AF42 /* H5URLRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE5A96A24EE710E0084AF42 /* H5URLRequest.swift */; };
-		BCF18D8524ED0AB400FCB636 /* JSBrdige+MsgHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF18D8424ED0AB400FCB636 /* JSBrdige+MsgHandler.swift */; };
+		BCF18D8524ED0AB400FCB636 /* JSBrdige+NativeApi.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF18D8424ED0AB400FCB636 /* JSBrdige+NativeApi.swift */; };
 		BCF18D8724ED0D7C00FCB636 /* JSBrdige+MsgSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF18D8624ED0D7C00FCB636 /* JSBrdige+MsgSender.swift */; };
 /* End PBXBuildFile section */
 
@@ -32,9 +32,9 @@
 		BC29C71C24AECF840015A19B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC29C72324AED0180015A19B /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		BC29C72524AED23E0015A19B /* JSBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSBridge.swift; sourceTree = "<group>"; };
-		BCE5A96724EE6AF50084AF42 /* app1 */ = {isa = PBXFileReference; lastKnownFileType = folder; path = app1; sourceTree = "<group>"; };
+		BC99C7C02580B12900FDD295 /* dist */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dist; path = ../../../../../Desktop/dist; sourceTree = "<group>"; };
 		BCE5A96A24EE710E0084AF42 /* H5URLRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = H5URLRequest.swift; sourceTree = "<group>"; };
-		BCF18D8424ED0AB400FCB636 /* JSBrdige+MsgHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSBrdige+MsgHandler.swift"; sourceTree = "<group>"; };
+		BCF18D8424ED0AB400FCB636 /* JSBrdige+NativeApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSBrdige+NativeApi.swift"; sourceTree = "<group>"; };
 		BCF18D8624ED0D7C00FCB636 /* JSBrdige+MsgSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSBrdige+MsgSender.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -68,7 +68,7 @@
 		BC29C70D24AECF800015A19B /* JSBridgeDemo */ = {
 			isa = PBXGroup;
 			children = (
-				BCE5A96724EE6AF50084AF42 /* app1 */,
+				BC99C7C02580B12900FDD295 /* dist */,
 				BCE5A96924EE70E00084AF42 /* H5URLRequest */,
 				BC29C72224AECFF00015A19B /* JSBridge */,
 				BC29C70E24AECF800015A19B /* AppDelegate.swift */,
@@ -86,7 +86,7 @@
 			isa = PBXGroup;
 			children = (
 				BC29C72524AED23E0015A19B /* JSBridge.swift */,
-				BCF18D8424ED0AB400FCB636 /* JSBrdige+MsgHandler.swift */,
+				BCF18D8424ED0AB400FCB636 /* JSBrdige+NativeApi.swift */,
 				BCF18D8624ED0D7C00FCB636 /* JSBrdige+MsgSender.swift */,
 				BC0DBE8524EBC9AE003E95E8 /* JSBridgeUtils.swift */,
 			);
@@ -159,7 +159,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCE5A96824EE6AF50084AF42 /* app1 in Resources */,
+				BC99C7C12580B12900FDD295 /* dist in Resources */,
 				BC29C71B24AECF840015A19B /* LaunchScreen.storyboard in Resources */,
 				BC29C71824AECF840015A19B /* Assets.xcassets in Resources */,
 				BC29C71624AECF800015A19B /* Main.storyboard in Resources */,
@@ -173,7 +173,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCF18D8524ED0AB400FCB636 /* JSBrdige+MsgHandler.swift in Sources */,
+				BCF18D8524ED0AB400FCB636 /* JSBrdige+NativeApi.swift in Sources */,
 				BC29C71324AECF800015A19B /* ViewController.swift in Sources */,
 				BC29C70F24AECF800015A19B /* AppDelegate.swift in Sources */,
 				BCE5A96B24EE710E0084AF42 /* H5URLRequest.swift in Sources */,
